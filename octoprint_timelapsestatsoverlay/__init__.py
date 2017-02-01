@@ -1,37 +1,22 @@
 # coding=utf-8
 from __future__ import absolute_import
 
-from octoprint.plugin import (  AssetPlugin,
-                                EventHandlerPlugin,
+from octoprint.plugin import (  EventHandlerPlugin,
                                 SettingsPlugin,
-                                StartupPlugin,
-                                TemplatePlugin )
+                                StartupPlugin )
 from octoprint.events import Events
 
 from PIL import Image, ImageDraw, ImageFont
 
-class TimelapseStatsOverlayPlugin(  AssetPlugin,
-                                    EventHandlerPlugin,
+class TimelapseStatsOverlayPlugin(  EventHandlerPlugin,
                                     SettingsPlugin,
-                                    StartupPlugin,
-                                    TemplatePlugin ):
+                                    StartupPlugin ):
 
     ##~~ SettingsPlugin mixin
 
     def get_settings_defaults(self):
         return dict(
             # put your plugin's default settings here
-        )
-
-    ##~~ AssetPlugin mixin
-
-    def get_assets(self):
-        # Define your plugin's asset files to automatically include in the
-        # core UI here.
-        return dict(
-            js=["js/TimelapseStatsOverlay.js"],
-            css=["css/TimelapseStatsOverlay.css"],
-            less=["less/TimelapseStatsOverlay.less"]
         )
 
     ##~~ Softwareupdate hook
