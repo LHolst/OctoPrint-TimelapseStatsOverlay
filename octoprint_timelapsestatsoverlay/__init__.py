@@ -9,11 +9,11 @@ from __future__ import absolute_import
 #
 # Take a look at the documentation on what other plugin mixins are available.
 
-import octoprint.plugin
+from octoprint.plugin import AssetPlugin, EventHandlerPlugin, TemplatePlugin
+from octoprint.events import Events
+from PIL import Image, ImageDraw, ImageFont
 
-class TimelapseStatsOverlayPlugin(octoprint.plugin.SettingsPlugin,
-                                  octoprint.plugin.AssetPlugin,
-                                  octoprint.plugin.TemplatePlugin):
+class TimelapseStatsOverlayPlugin(SettingsPlugin, AssetPlugin, TemplatePlugin):
 
 	##~~ SettingsPlugin mixin
 
@@ -54,7 +54,24 @@ class TimelapseStatsOverlayPlugin(octoprint.plugin.SettingsPlugin,
 				pip="https://github.com/LHolst/OctoPrint-TimelapseStatsOverlay/archive/{target_version}.zip"
 			)
 		)
+	font = ImageFont.truetype('LiberationMono-Regular.ttf', 40)
+    def on_event(self, event, payload):
+        if event == Events.CAPTURE_DONE:
+            self._handleCaptureDone(payload['file'])
 
+    def _handleCaptureDone(self, file):
+        current_progress = self._printer.get_current_data()['progress']
+        self._logger.info("Handling Capture {}, completion {}".format(file, current_progress['completion']))
+        #self._logger.info("current_data: {}".format(self._printer.get_current_data()))
+	frame = Image.open(file)
+        width, height = frame.size
+        draw = ImageDraw.Draw(frame)
+	if current_progress['completion']:
+            draw.text((width/2, height/2), "P: {}%".format(current_progress['completion']*100), font=self.font, fill=(125, 125, 125, 255))
+	if current_progress['printTime']:
+            draw.text((width/2, height/4), "T: {}%".format(current_progress['printTime']), font=self.font, fill=(125, 125, 125, 255))
+	del draw
+        frame.save(file)
 
 # If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
 # ("OctoPrint-PluginSkeleton"), you may define that here. Same goes for the other metadata derived from setup.py that
