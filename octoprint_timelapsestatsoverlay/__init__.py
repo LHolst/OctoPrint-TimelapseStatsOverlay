@@ -9,8 +9,12 @@ from __future__ import absolute_import
 #
 # Take a look at the documentation on what other plugin mixins are available.
 
-from octoprint.plugin import AssetPlugin, EventHandlerPlugin, TemplatePlugin
+from octoprint.plugin import (  AssetPlugin,
+                                EventHandlerPlugin,
+                                SettingsPlugin,
+                                TemplatePlugin )
 from octoprint.events import Events
+
 from PIL import Image, ImageDraw, ImageFont
 
 class TimelapseStatsOverlayPlugin(SettingsPlugin, AssetPlugin, TemplatePlugin):
