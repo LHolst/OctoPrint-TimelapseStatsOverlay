@@ -1,14 +1,6 @@
 # coding=utf-8
 from __future__ import absolute_import
 
-### (Don't forget to remove me)
-# This is a basic skeleton for your plugin's __init__.py. You probably want to adjust the class name of your plugin
-# as well as the plugin mixins it's subclassing from. This is really just a basic skeleton to get you started,
-# defining your plugin as a template plugin, settings and asset plugin. Feel free to add or remove mixins
-# as necessary.
-#
-# Take a look at the documentation on what other plugin mixins are available.
-
 from octoprint.plugin import (  AssetPlugin,
                                 EventHandlerPlugin,
                                 SettingsPlugin,
@@ -70,6 +62,7 @@ class TimelapseStatsOverlayPlugin(  AssetPlugin,
 
     def on_event(self, event, payload):
         if event == Events.CAPTURE_DONE:
+            self._logger.debug("Got event: {} with payload: {}".format(event, payload))
             self._handleCaptureDone(payload['file'])
 
     def _handleCaptureDone(self, file):
@@ -77,13 +70,17 @@ class TimelapseStatsOverlayPlugin(  AssetPlugin,
         self._logger.info("Handling Capture {}, completion {}".format(file, current_progress['completion']))
         frame = Image.open(file)
         width, height = frame.size
+        self._logger.debug("Frame width: {} ,height: {}".format(width, height))
         draw = ImageDraw.Draw(frame)
         if current_progress['completion']:
-                draw.text((width/2, height/2), "P: {}%".format(current_progress['completion']*100), font=self.font, fill=(125, 125, 125, 255))
+            self._logger.debug("Drawing completion")
+            draw.text((width/2, height/2), "P: {}%".format(current_progress['completion']*100), font=self.font, fill=(125, 125, 125, 255))
         if current_progress['printTime']:
-                draw.text((width/2, height/4), "T: {}%".format(current_progress['printTime']), font=self.font, fill=(125, 125, 125, 255))
+            self._logger.debug("Drawing printTime")
+            draw.text((width/2, height/4), "T: {}%".format(current_progress['printTime']), font=self.font, fill=(125, 125, 125, 255))
         del draw
         frame.save(file)
+        self._logger.debug("Frame saved")
 
 # If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
 # ("OctoPrint-PluginSkeleton"), you may define that here. Same goes for the other metadata derived from setup.py that
