@@ -12,12 +12,17 @@ from __future__ import absolute_import
 from octoprint.plugin import (  AssetPlugin,
                                 EventHandlerPlugin,
                                 SettingsPlugin,
+                                StartupPlugin,
                                 TemplatePlugin )
 from octoprint.events import Events
 
 from PIL import Image, ImageDraw, ImageFont
 
-class TimelapseStatsOverlayPlugin(SettingsPlugin, AssetPlugin, TemplatePlugin):
+class TimelapseStatsOverlayPlugin(  AssetPlugin,
+                                    EventHandlerPlugin,
+                                    SettingsPlugin,
+                                    StartupPlugin,
+                                    TemplatePlugin ):
 
     ##~~ SettingsPlugin mixin
 
@@ -58,7 +63,11 @@ class TimelapseStatsOverlayPlugin(SettingsPlugin, AssetPlugin, TemplatePlugin):
                 pip="https://github.com/LHolst/OctoPrint-TimelapseStatsOverlay/archive/{target_version}.zip"
             )
         )
+
     font = ImageFont.truetype('LiberationMono-Regular.ttf', 40)
+    def on_after_startup(self):
+            self._logger.info("Starting TimelapseStatsOverlay Plugin    Hi!")
+
     def on_event(self, event, payload):
         if event == Events.CAPTURE_DONE:
             self._handleCaptureDone(payload['file'])
