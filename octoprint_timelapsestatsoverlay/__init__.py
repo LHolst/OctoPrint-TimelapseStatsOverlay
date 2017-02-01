@@ -70,7 +70,7 @@ class TimelapseStatsOverlayPlugin(SettingsPlugin, AssetPlugin, TemplatePlugin):
         if current_progress['printTime']:
                 draw.text((width/2, height/4), "T: {}%".format(current_progress['printTime']), font=self.font, fill=(125, 125, 125, 255))
         del draw
-            frame.save(file)
+        frame.save(file)
 
 # If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
 # ("OctoPrint-PluginSkeleton"), you may define that here. Same goes for the other metadata derived from setup.py that
